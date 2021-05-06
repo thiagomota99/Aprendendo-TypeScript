@@ -116,7 +116,7 @@ no arquivo `tsconfig.json`:
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc",
-    "start": "tsc -w" //definimos o atributo start do objeto script. Onde seu valor é o compilador typescript e o parâmetro -w(wathc) que o mesmo ficará observando
+    "start": "tsc -w" //definimos o atributo start do objeto script. Onde seu valor é o compilador typescript e o parâmetro -w(watch) que o mesmo ficará observando
                       //as alterações dos arquivos typescript.
   },
   "author": "",
