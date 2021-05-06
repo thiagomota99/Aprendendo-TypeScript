@@ -9,9 +9,9 @@ Esse repositório é destinado para o aprendizado da linguagem TypeScript.
     - Já dentro do diretório raiz do projeto execute o seguinte comando `npm init`. O mesmo estará fazendo o downloads necessário para a configuração do typescript na máquina</br>
     após a instalação será criado um arquivo chamado `package.json` onde estarão todas as dependências baixadas do npm.
     - Agora novamente através o terminal iremos baixar e instalar o typescript na máquina com o comando `npm install typescript@2.3.2 --save-dev`
-    Posterior isso analisando as pastas do projeto notamos que foi criado o diretório node_modules. Lá encontraremos diversos sub-diretórios inclusive o typescript onde dentro do</br>
-    mesmo encontramos a bin e o arquivo **tsc** que é o compilador do typescript
-    - Criar um novo arquivo na raiz do projeto chamado `tsconfig.json` que é o arquivo responsável por conter as configurações que serão consideradas pelo compilador do typescript na hora da execução.
+    Posterioriamente a isso analisando as pastas do projeto notamos, que foi criado o diretório node_modules. Lá encontraremos diversos sub-diretórios inclusive o **typescript** onde dentro do</br>
+    mesmo encontramos a pasta **bin** e o arquivo **tsc** que é o compilador do TypeScript
+    - Criaremos um novo arquivo na raiz do projeto chamado `tsconfig.json`. É o arquivo responsável por conter as configurações que serão consideradas pelo compilador do typescript na hora da execução.
     - A configuração mínima para o compilador typescript é:
 ```js
 {
