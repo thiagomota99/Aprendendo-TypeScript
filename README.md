@@ -89,3 +89,19 @@ class Negociacao {
     }
 }
 ```
+
+3. Garantir que o typescript só irá gerar um js a partir de um arquivo typescript válido (sem erros de sintaxe). Para resolvermos isso iremos fazer a seguinte configuração<br>
+no arquivo `tsconfig.json`:
+```js
+{
+    "compilerOptions": {
+        "target": "es6",
+        "outDir": "app/js",
+        "noEmitOnError": true //Enquanto houver um erro no arquivo typescript o mesmo não ira gerar um novo arquivo js.
+    },
+    "include": [
+        "app/ts/**/*"
+    ]
+}    
+```
+*Obs*: Sempre que fizer qualquer alteração no arquivo `tsconfig.json` feche e abra novamente o editor de código para ele carregar as novas configurações colocadas.
