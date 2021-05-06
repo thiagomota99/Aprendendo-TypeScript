@@ -53,3 +53,39 @@ Esse repositório é destinado para o aprendizado da linguagem TypeScript.
 ```
 Por fim, volte novamente ao terminal e execute o comando `npm run compile`. Esse comando é responsável por chamar o arquivo `package.json`.</br>
 O mesmo irá executar o objeto script e o atributo que criamos (compile).
+
+2. Definindo uma classe em TypeScript. Veja o exemplo abaixo.
+```ts
+class Negociacao {
+    
+    //Criando os atributos da classe. O mesmo segue a sintaxe:
+    //modificador de acesso nomeDoAtributo: tipo do atributo;
+    private _data: Date;
+    private _quantidade: number;
+    private _valor: number;
+
+    //Construtor da classe
+    constructor(data, quantidade, valor) {
+        this._data = data;
+        this._quantidade = quantidade;
+        this._valor = valor;
+    }
+
+    //Métodos get da classe
+    get data(){
+        return this._data;
+    }
+
+    get quantidade(){
+        return this._quantidade;
+    }
+
+    get valor(){
+        return this._valor;
+    }
+
+    get volume(){
+        return this._quantidade * this._valor;
+    }
+}
+```
