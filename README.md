@@ -105,3 +105,26 @@ no arquivo `tsconfig.json`:
 }    
 ```
 *Obs*: Sempre que fizer qualquer alteração no arquivo `tsconfig.json` feche e abra novamente o editor de código para ele carregar as novas configurações colocadas.
+
+4. Compilar arquivos ts sem precisar rodar o comando `npm run compile` faremos a seguinte configuração no arquivo `package.json`
+```js
+{
+  "name": "alurabank",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc",
+    "start": "tsc -w" //definimos o atributo start do objeto script. Onde seu valor é o compilador typescript e o parâmetro -w(wathc) que o mesmo ficará observando
+                      //as alterações dos arquivos typescript.
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^2.3.2"
+  }
+}
+```
+Com isso agora no terminal podemos substituir o comando por `npm start`. Desta forma, toda vez que o arquivo typescript sofrer alguma alteração será realizada a compilação
+novamente do arquivo.
