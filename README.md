@@ -59,10 +59,10 @@ O mesmo irá executar o objeto script e o atributo que criamos (compile).
 class Negociacao {
     
     //Criando os atributos da classe. O mesmo segue a sintaxe:
-    //modificador de acesso nomeDoAtributo: tipo do atributo;
-    private _data: Date;
-    private _quantidade: number;
-    private _valor: number;
+    //modificador de acesso nomeDoAtributo;
+    private _data;
+    private _quantidade;
+    private _valor;
 
     //Construtor da classe
     constructor(data, quantidade, valor) {
@@ -128,3 +128,103 @@ no arquivo `tsconfig.json`:
 ```
 Com isso agora no terminal podemos substituir o comando por `npm start`. Desta forma, toda vez que o arquivo typescript sofrer alguma alteração será realizada a compilação
 novamente do arquivo.
+
+5. Definindo o tipo dos atributos. Quando não definido um tipo específico para os atributos, por padrão o typescript adota para todos os atributos implicitamente o tipo `any` (qualquer coisa). Desta forma não precisamos especifica-lo. Entretando podemos definir nos mesmos os tipos dos atributos usando a seguinte sintaxe:
+```ts
+class Negociacao {
+    
+    //Criando os atributos da classe. O mesmo segue a sintaxe:
+    //modificador de acesso nomeDoAtributo: tipoDoAtributo;
+    //private variavelQualquer: any; => O tipo é atribuído implicitamente. Ou seja, pode omitir o tipo "any".
+    private _data: Date;
+    private _quantidade: number;
+    private _valor: number;
+
+    //Construtor da classe
+    constructor(data: Date, quantidade: number, valor: number) { //Definindo o tipo dos parâmetros a serem passados para o construtor da classe
+        this._data = data;
+        this._quantidade = quantidade;
+        this._valor = valor;
+    }
+
+    //Métodos get da classe
+    get data(){
+        return this._data;
+    }
+
+    get quantidade(){
+        return this._quantidade;
+    }
+
+    get valor(){
+        return this._valor;
+    }
+
+    get volume(){
+        return this._quantidade * this._valor;
+    }
+}
+```
+
+8. Podemos definir como configuração do compilador do typescript para o mesmo não adotar o tipo any como padrão. Isso será feito no arquivo, já conhecido anteriomente `tsconfig.json` da seguinte forma:
+```js
+{
+    "compilerOptions": {
+        "target": "es6",
+        "outDir": "app/js",                             
+        "noEmitOnError": true,
+        "noImplicitAny": true //Propriedade a que não permite a adoção do tipo any de modo implícito. Caso contrário, defina o valor da propriedade como false.
+    },
+    "include": [
+        "app/ts/**/*" //Levar em consideração na hora da compilação todos os arquivos que estão no diretório app/ts/
+                      //os asterísticos significam todos. No caso todos diretórios, sub-diretórios e arquivos filhos de ts. 
+    ]
+}        
+```
+
+9. Podemos também utilizar atalhos na hora da criação de classes em typescript, veja um exemplo:
+```ts
+class Negociacao {
+    
+    //Construtor da classe
+    //Desta forma estou criando os atributos e definindo seus valores no momento da criação do objeto da classe.
+    constructor(private _data: Date, private _quantidade: number, private _valor: number) {}
+
+    //Métodos get da classe
+    get data(){
+        return this._data;
+    }
+
+    get quantidade(){
+        return this._quantidade;
+    }
+
+    get valor(){
+        return this._valor;
+    }
+
+    get volume(){
+        return this._quantidade * this._valor;
+    }
+}
+```
+
+10. O TypeScript trata todos os elementos do DOM como o tipo `Element`. Então caso queira acessar propriedades e métodos de elementos específicos, como por exemplo input utilizamos o cast. Que irá transformar nossos atributos do tipo `Element` em `HTMLInputElement`, com isso poderemos acessar propriedades específicas desse elemento como o "value".
+
+```ts
+class NegociacaoController {
+
+    private _inputData: HTMLInputElement; //Definindo o tipo de elemento do html que queremos
+    private _inputQuantidade: HTMLInputElement;
+    private _inputValor: HTMLInputElement;
+
+    constructor() {
+        this._inputData = <HTMLInputElement>document.querySelector("#data"); //Utilizando o cast para converter Element => HTMLInputElement
+        this._inputQuantidade = <HTMLInputElement>document.querySelector("#quantidade");
+        this._inputValor = <HTMLInputElement>document.querySelector("#valor");
+    }
+
+}
+```
+
+11. 
