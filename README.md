@@ -227,4 +227,108 @@ class NegociacaoController {
 }
 ```
 
-11. 
+11. Existem algumas formas de declarar um atributo como um Array em typescript, tipos de retornos dos métodos . Veja alguns dos exemplos:
+```ts
+class Negociacoes {
+    private _negociacaoes: Array<Negociacao> = []; //Nesse caso estou definindo o atributo _negociacao como um Array que vai armazenar objetos do tipo Negociacao
+                                                   //Isso garante que caso ele receba outro tipo de dado que não seja uma Negociacao irá acusar um erro de sintaxe
+
+    private arrayDeNumbers: number[] = []; //Uma outra de definir um atributo como um Array
+
+    adiciona(negociacao: Negociacao): void { //void representa que o método não retorna nada.
+
+        this._negociacaoes.push(negociacao);
+    }
+
+    paraArray() : Negociacao[] { //Negociacao[] devole um array de objetos do tipo Negociacao
+
+        return [].concat(this._negociacaoes);
+    }
+}
+```
+
+12. Para criar uma herança entre classes em TypeScript utilizamos a palavra reservada `extends` na definição da classe. Existem outras funcionalidades que o typescript nos fornece na criação de classes e utilização do pilar herança. Veja algumas dessas funcionalidades:
+```ts
+
+//Criando a classe abstrata View. A palavra reservada abstracat gatante que a classe não pode ser instânciada apenas herdada.
+abstract class View<T> { //O operador diamante <> indica que a classe é do tipo generics. Ou seja, vai variar conforme a classe filha
+    
+    private _elemento: Element;
+
+    constructor(seletor: string){
+
+        this._elemento = $(seletor);
+    }
+
+    update(modelo: T): void {
+        this._elemento.innerHTML = this.template(modelo);
+    }
+
+    protected abstract template(modelo: T): string; //Esse método deverá ser implementado nas classes que herdarem o mesmo. Seu modificador de acesso é protected
+                                                    //pois as classes filhas precisam implementa-lo e o mesmo não deve ficar exposto para fora da classes que o herdarem.
+}
+
+
+
+
+
+class MensagemView extends View<string> { //Aqui a classe MensagemView está determinado que os parâmetros dos métodos serão do tipo string
+
+    //O contrutor poderia ser omitido nesse caso. Entretanto foi colocado para fins didáticos.
+    constructor(seletor: string) {
+
+        super(seletor); //Isso indica que o construtor está chamando o construtor da classe pai.
+    }
+
+    protected template(modelo: string): string {
+        
+        return `<p class="alert alert-info">${modelo}</p>`;
+    }
+
+}
+
+
+class NegociacoesView extends View<Negociacoes>{ //Aqui a classe NegociacoesView está determinado que os parâmetros dos métodos serão do tipo string Negociacoes
+
+    constructor(seletor: string) {
+
+        super(seletor);        
+    }
+
+    protected template(modelo: Negociacoes): string {
+
+        return `
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>DATA</th>
+                    <th>QUANTIDADE</th>
+                    <th>VALOR</th>
+                    <th>VOLUME</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${modelo.paraArray().map(negociacao =>
+                    `
+                        <tr>
+                            <td>${negociacao.data.getDate()}/${negociacao.data.getMonth()+1}/${negociacao.data.getFullYear()}</td>
+                            <td>${negociacao.quantidade}</td>
+                            <td>${negociacao.valor}</td>
+                            <td>${negociacao.volume}</td>                            
+                        </tr>
+                    `
+                ).join('')}
+            </tbody>
+    
+            <tfoot>
+                <td colspan="3"></td>
+                <td>
+                    
+                </td>
+            </tfoot>
+        </table>
+        `;
+    }
+
+}
+```
