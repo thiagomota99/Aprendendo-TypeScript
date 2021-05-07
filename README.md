@@ -227,20 +227,20 @@ class NegociacaoController {
 }
 ```
 
-11. Existem algumas formas de declarar um atributo como um Array em typescript, tipos de retornos dos métodos . Veja alguns dos exemplos:
+11. Existem algumas formas de declarar um atributo como um Array em typescript. E também definir tipos de retornos dos métodos . Veja alguns dos exemplos:
 ```ts
 class Negociacoes {
     private _negociacaoes: Array<Negociacao> = []; //Nesse caso estou definindo o atributo _negociacao como um Array que vai armazenar objetos do tipo Negociacao
                                                    //Isso garante que caso ele receba outro tipo de dado que não seja uma Negociacao irá acusar um erro de sintaxe
 
-    private arrayDeNumbers: number[] = []; //Uma outra de definir um atributo como um Array
+    private arrayDeNumbers: number[] = []; //Uma outra forma de definir um atributo como um Array. No caso um array de numbers
 
     adiciona(negociacao: Negociacao): void { //void representa que o método não retorna nada.
 
         this._negociacaoes.push(negociacao);
     }
 
-    paraArray() : Negociacao[] { //Negociacao[] devole um array de objetos do tipo Negociacao
+    paraArray() : Negociacao[] { //Negociacao[] devolve uma cópia de um array de objetos do tipo Negociacao
 
         return [].concat(this._negociacaoes);
     }
@@ -332,3 +332,30 @@ class NegociacoesView extends View<Negociacoes>{ //Aqui a classe NegociacoesView
 
 }
 ```
+
+13. Instalando TSD (Type Script Definition). É um arquivo que mapeia a biblioteca (funções,métodos,objetos...) que você deseja utilizar no projeto. No caso utilizaremos o JQuery.
+Podemos instalar diretamente através do npm (node package management). Abra seu prompt de comando na pasta raíz do projeto e execute os seguintes passos:
+- Instale o TSD do JQuery com o comando: `npm install @types/jquery@2.0.42 --save-dev`</br>
+Após isso podera notar que no diretório node_modules/@types agora possui o diretório jquery. Que por sua vez possui o arquivo `index.d.ts` que irá mapear todas as funções do JQuery
+para o TypeScript.
+*Obs:* Feche e abra novamente sua IDE após a instalação do TSD.
+
+```ts
+abstract class View<T> {
+    
+    private _elemento: JQuery; //Atribuindo o tipo JQuery ao atributo após instalar o TSD.
+                               //isso nos possibilita lançar mão de alterar nosso código para trabalhar com as funções do Jquery.
+    constructor(seletor: string){
+
+        this._elemento = $(seletor); //$() representa a função querySelector;
+    }
+
+    update(modelo: T): void {
+        this._elemento.html(this.template(modelo)); //a função html representa o innerHTML no javascript puro.
+    }
+
+    protected abstract template(modelo: T): string;
+}
+```
+
+14. Remover comentários na hora da compilação dos arquivos ts para js pode ser uma boa estratégia para não vazer comentários no código javascript em produção. Para isso utilizamos uma nova propriedade no arquivo de configuração do compilador chamada `"removeComments": true;`. A mesma na hora de gerar os js a partir da compilação dos arquivos TypeScript irá remover os comentários.
