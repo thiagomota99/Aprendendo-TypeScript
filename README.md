@@ -358,4 +358,176 @@ abstract class View<T> {
 }
 ```
 
-14. Remover comentários na hora da compilação dos arquivos ts para js pode ser uma boa estratégia para não vazer comentários no código javascript em produção. Para isso utilizamos uma nova propriedade no arquivo de configuração do compilador chamada `"removeComments": true;`. A mesma na hora de gerar os js a partir da compilação dos arquivos TypeScript irá remover os comentários.
+14. Remover comentários na hora da compilação dos arquivos ts para js pode ser uma boa estratégia para não vazar comentários no código javascript em produção. Para isso utilizamos uma nova propriedade no arquivo de configuração do compilador chamada `"removeComments": true;`. A mesma na hora de gerar os js a partir da compilação dos arquivos TypeScript irá remover os comentários.
+
+15. Criando namespaces em TypeScript, isso facilita na hora de encontrar classes que estão em diretórios diferentes.
+```ts
+namespace Views { //Adicionamos o bloco namespace juntamente com um nome que fique claro sobre o que aquele namespace se refere, no meu caso é uma View, então coloquei Views
+    export abstract class View<T> { //Devemos também adicionar a palavra reservada "export"
+        
+        private _elemento: JQuery;
+
+        constructor(seletor: string){
+
+            this._elemento = $(seletor);
+        }
+
+        update(modelo: T): void {
+            this._elemento.innerHTML = this.template(modelo);
+        }
+
+        protected abstract template(modelo: T): string; 
+    }
+
+}
+
+import View = Views.View // Uma outra abordagem é utilizar a palavra reservada import para importar a classe que queremos.
+                         //Desta forma trocamos o "extends Views.View<string> => extends View<string>"
+
+class MensagemView extends Views.View<string> { //Como a classe MensagemView estende a classe View que está dentro de um namespace, para acessa-la devemos utilizar o nome do namespace
+                                               //para referenciar a classe que estamos estendendo.
+    
+    constructor(seletor: string) {
+
+        super(seletor);
+    }
+
+    protected template(modelo: string): string {
+        
+        return `<p class="alert alert-info">${modelo}</p>`;
+    }
+
+}
+```
+
+17. Adequando todos os scripts (módulos, arquivos TypeScript) para o sistema de módulos do ECMASCRIPT 2015. Veja o exemplo de como fazer:
+
+```ts
+export abstract class View<T> { //utilizando a palavra reservada export para exportar o módulo View, no caso a classe
+        
+    private _elemento: JQuery;
+
+    constructor(seletor: string){
+
+        this._elemento = $(seletor);
+    }
+
+    update(modelo: T): void {
+        this._elemento.innerHTML = this.template(modelo);
+    }
+        
+    protected abstract template(modelo: T): string; 
+}
+
+
+
+import { View } from './View' //Está linha tem o objetivo de importar a classe View do diretório atual do arquivo View. import { nome_do_modulo } from 'diretorio/arquivo'
+
+class MensagemView extends View<string> { 
+
+    constructor(seletor: string) {
+
+        super(seletor);
+    }
+
+    protected template(modelo: string): string {
+        
+        return `<p class="alert alert-info">${modelo}</p>`;
+    }
+
+}
+```
+
+18. Definindo um carregador (loader) de módulos js. Já que atualmente não existe um carregador nativo nos navegadores para carregar os módulos. Entretanto podemos utilizar uma biblioteca js o `System.js`. É um carregador universal de módulos. Para isso além de instanciar o arquivo js da biblioteca no index, devemos também adicionar uma nova propriedade no arquivo `tsconfig.json`. Para que o mesmo na hora de gerar os arquivos js, criar uma estrutura sobre os arquivos para que a biblioteca do loader consiga utilizar para carregar os módulos. Veja o exemplo:
+
+```html
+<!-- codigo html... -->
+
+<script src="lib/system.js"></script>
+<script>
+    //Indicando o primeiro módulo que deve ser carregado pela biblioteca.
+    System.defaultJSExtensions = true; //Omitir extensão na hora dos imports
+    System.import('js/app.js').catch(err => console.error(err)); //Importar o arquivo app.js dentro do diretório js. A partir disso ele conseguirá importar os outros módulos.
+</script>
+```
+
+```ts
+//Arquivo tsconfig.json
+{
+    "compilerOptions": {
+        "target": "es6",
+        "outDir": "app/js",
+        "noEmitOnError": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "module": "system", // a propriedade "module" aceita vários valores. Para a geração de arquivos js na estrutura de módulos utilizamos o valor system. Que é a biblioteca
+                            //de loader que estamos utilizando.
+    },
+    "include": [
+        "app/ts/**/*"
+    ]
+}
+```
+Apenas essa configuração não é suficiente, pois a biblioteca do loader faz requisições http para baixar os módulos. Com isso devemos colocar nossa aplicação em um servidor web que irá disponibilizar nossa aplicação para o browser. Para instalarmos um servidor web, podemos utilizar o npm. Que nos disponibiliza um servidor para rodarmos nossa aplicação. Portanto siga o exemplo para instalar o servidor web lite-server:</br>
+- No prompt de comando execute o comando `npm install lite-server@2.3.0 --save-dev`
+- Depois iremos até o arquivo `package.json` e acrescentaremos a seguinte propriedade ao objeto script:
+```ts
+{
+  "name": "alurabank",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc",
+    "watch": "tsc -w", //cria-se a propriedade watch com o valor de observação do compilador TypeScript
+    "server": "lite-server --baseDir=app", //quando essa propriedade for acionada no prompt de comando vai subir o servidor lite-server e vai considerar o diretório base "app"
+    "start": "concurrently \" npm run watch\" \"npm run server\"" //quando o npm run start for executado no prompt o mesmo vai inicilizar o concurrently passando como
+                                                                  //parâmetro os dois comandos npm run watch (inicializar o compilador ts) e npm run server (inicializar o lite-server)
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jquery": "^2.0.42",
+    "concurrently": "^3.4.0", //no prompt de comando rode o comando: npm install concurrently@3.4.0 --save-dev esse módulo garante que possamos iniciar o server e o compilador do ts.
+    "lite-server": "^2.3.0",
+    "typescript": "^2.3.2"
+  }
+}
+```
+
+19. Organizando os módulos da aplicação em barris. Essa estratégia consiste em colocar todos os módulos que são em comuns em um só lugar. Facilitando a importação em outros lugares
+veja o exemplo abaixo</br>
+- Primeiro criaremos um novo arquivo ts chamado `index.ts` nos diretórios de ts/views e ts/models
+- Depois disso segue o código abaixo:
+
+```ts
+//index.ts do diretório ts/views
+//O mesmo está exportando tudo que os módulos View, MensagemView e NegociacoesView exportam. Isso nos possibilita em uma outra classe usarmos a seguinte sintaxe:
+// import { NegociacoesView, MensagemView } from ../views/index
+export * from './View';
+export * from './MensagemView';
+export * from './NegociacoesView';
+
+// A mesma coisa podemos fazer no diretório ts/models
+// import { Negociacao, Negociacoes } from ../models/index
+export * from './Negociacao';
+export * from './Negociacoes';
+```
+
+20. Utilizando o `readonly` sobre os atributos da classe para defini-los apenas como atributos de leitura.
+```ts
+export class Negociacao {
+    
+    //Podemos utilizar a propriedade data readonly para determinar que os atributos da classe são apenas de leitura
+    //e que não podem ter seus valores alterados. Com isso eliminamos o uso dos getters.
+    //Detalhe: Caso não queria expor de maneira nenhuma seu atributo para o mundo externo, deixe-o como private e crie um getter para o mesmo caso necessário.
+    constructor(readonly data: Date, readonly quantidade: number, readonly valor: number) {}
+
+    get volume(){
+
+        return this.quantidade * this.valor;
+    }
+}
+```
+
